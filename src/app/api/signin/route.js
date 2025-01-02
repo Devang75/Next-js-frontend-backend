@@ -1,7 +1,6 @@
 import { User } from '../../modals/users';
 import connectDB from '../../../lib/dbConnect';
-import { NextResponse } from 'next/server';
-import { createErrorResponse, jwtSign } from '../../../commons/utils';
+import { createErrorResponse, createSuccessResponse, jwtSign } from '../../../commons/utils';
 import bcrypt from "bcrypt";
 
 // Sign in existing user
@@ -26,7 +25,7 @@ export async function POST(request) {
       }
   
       const token = await jwtSign({id: user._id, email: user.email});
-      const response = NextResponse.json({ user, token }, { status: 200 });
+      const response = createSuccessResponse({ user, token }, 200);
       response.cookies.set('token', token, { httpOnly: true });
   
       return response;

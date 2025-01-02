@@ -3,12 +3,12 @@ import { SignJWT, jwtVerify } from 'jose';
 
 // Error response helper
 export const createErrorResponse = (message, status) => {
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json({ error: message, status: false }, { status });
 };
 
 // Success response helper
 export const createSuccessResponse = (data, status) => {
-    return NextResponse.json(data, { status });
+    return NextResponse.json({...data, status: true }, { status });
 };
 
 // Input validation
@@ -33,7 +33,18 @@ export const jwtSign = async (payload) => {
 };
 
 export const verifyJWT = async (token) => {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    const { payload } = await jwtVerify(token, secret);
-    return payload;
+    try {
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const { payload } = await jwtVerify(token, secret);
+        return payload;
+    } catch (error) {
+        console.error('error', error);
+        if (error.code === 'ERR_JWT_EXPIRED') {
+            return { error: 'Token has expired' };
+        }
+        if (error.code === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED') {
+            return { error: 'signature verification failed' };
+        }
+        return { error: 'Invalid token' };
+    }
 };
