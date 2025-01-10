@@ -29,6 +29,11 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         minlength: 6  // Fixed typo from 'minlenght'
+    },
+    logintype: {
+        type: String,
+        required: true, 
+        enum: ['email', 'google', 'facebook']
     }
 }, {
     timestamps: true,

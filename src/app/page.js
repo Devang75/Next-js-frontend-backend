@@ -1,5 +1,5 @@
 "use client"
-import { deleteCookie } from 'cookies-next/client';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -43,8 +43,9 @@ export default function TodoList() {
 
   const logout = async (event) => {
     event.preventDefault();
-    const respomse = deleteCookie('token');
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     console.info("User logged out");
+    await signOut({ redirect: false });
     return router.push('/login');
   };
 
